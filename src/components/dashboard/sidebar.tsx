@@ -17,6 +17,7 @@ import clsx from 'clsx'
 const analyticsNavigation = [
   { name: 'Overview', href: '/dashboard', icon: HomeIcon },
   { name: 'Detection Engine', href: '/dashboard/detection', icon: MagnifyingGlassIcon },
+  { name: 'Reconciliation', href: '/dashboard/reconciliation', icon: MagnifyingGlassIcon },
   { name: 'Accounts', href: '/dashboard/accounts', icon: UserGroupIcon },
 ]
 
