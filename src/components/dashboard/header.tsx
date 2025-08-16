@@ -9,7 +9,7 @@ export function DashboardHeader() {
   return (
     <header className="header">
       <div className="header-left">
-        <h1 className="header-title">Revenue Intelligence Dashboard</h1>
+        <h1 className="header-title">AI Revenue Intelligence</h1>
         <p className="header-subtitle">Real-time leak detection and automated recovery</p>
       </div>
       <div className="header-actions">

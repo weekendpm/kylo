@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { demoSummaryData, isDemoMode } from './demo-data'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'
 
@@ -47,11 +48,28 @@ export const authService = {
 }
 
 export const dashboardService = {
-  getSummary: (params?: { period_start?: string; period_end?: string }) =>
-    api.get('/api/dashboard/summary', { params }),
+  getSummary: async (params?: { period_start?: string; period_end?: string }) => {
+    if (isDemoMode()) {
+      // Return demo data with a small delay to simulate API call
+      await new Promise(resolve => setTimeout(resolve, 500))
+      return { data: demoSummaryData }
+    }
+    return api.get('/api/dashboard/summary', { params })
+  },
   
-  getAccountDetails: (accountId: string) =>
-    api.get(`/api/dashboard/accounts/${accountId}`),
+  getAccountDetails: async (accountId: string) => {
+    if (isDemoMode()) {
+      await new Promise(resolve => setTimeout(resolve, 300))
+      return { 
+        data: {
+          account_id: accountId,
+          anomalies: demoSummaryData.top_anomalies.filter(a => a.account_id === accountId),
+          usage_trends: []
+        }
+      }
+    }
+    return api.get(`/api/dashboard/accounts/${accountId}`)
+  },
 }
 
 export const reconService = {

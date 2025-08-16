@@ -18,6 +18,37 @@ export default function LoginPage() {
     setError('')
 
     try {
+      // Demo mode: if email is 'demo@demo.com', skip actual authentication
+      if (email === 'demo@demo.com') {
+        // Simulate API delay
+        await new Promise(resolve => setTimeout(resolve, 1000))
+        
+        // Create fake user data and store in localStorage for demo
+        const demoUser = {
+          id: 'demo-user-id',
+          org_id: 'demo-org-id',
+          email: 'demo@demo.com',
+          first_name: 'Demo',
+          last_name: 'User',
+          role: 'ADMIN' as const,
+          status: 'ACTIVE' as const
+        }
+        
+        const demoOrg = {
+          id: 'demo-org-id',
+          name: 'Demo Corporation',
+          domain: 'demo.com',
+          settings: {}
+        }
+        
+        localStorage.setItem('demo_user', JSON.stringify(demoUser))
+        localStorage.setItem('demo_org', JSON.stringify(demoOrg))
+        localStorage.setItem('auth_token', 'demo-token')
+        
+        router.push('/dashboard')
+        return
+      }
+      
       await login(email, password)
     } catch (err: any) {
       setError(err.message)
@@ -37,11 +68,20 @@ export default function LoginPage() {
             </svg>
           </div>
           <h2 className="mt-6 text-center text-3xl font-extrabold" style={{ color: 'var(--text-primary)' }}>
-            Revenue Recovery Copilot
+            Kylo.ai
           </h2>
           <p className="mt-2 text-center text-sm" style={{ color: 'var(--text-secondary)' }}>
             Sign in to your account
           </p>
+          <div className="mt-4 p-3 text-center" style={{ 
+            background: 'rgba(59, 130, 246, 0.1)', 
+            border: '1px solid rgba(59, 130, 246, 0.2)',
+            borderRadius: '8px'
+          }}>
+            <p className="text-xs" style={{ color: 'var(--primary-light)' }}>
+              💡 Demo Mode: Use email <strong>demo@demo.com</strong> with any password
+            </p>
+          </div>
         </div>
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           {error && (

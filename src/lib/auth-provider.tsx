@@ -52,27 +52,48 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const router = useRouter()
 
   useEffect(() => {
-    // Check for existing token on mount
-    const storedToken = localStorage.getItem('auth_token')
-    if (storedToken) {
-      setToken(storedToken)
-      // Verify token and get user data
-      verifyToken(storedToken)
-    } else {
-      setLoading(false)
-    }
+    // Add a small delay to ensure client-side hydration is complete
+    const timer = setTimeout(() => {
+      // Check for existing token on mount
+      const storedToken = localStorage.getItem('auth_token')
+      if (storedToken) {
+        setToken(storedToken)
+        
+        // Check if it's demo mode
+        if (storedToken === 'demo-token') {
+          const demoUser = localStorage.getItem('demo_user')
+          const demoOrg = localStorage.getItem('demo_org')
+          
+          if (demoUser && demoOrg) {
+            setUser(JSON.parse(demoUser))
+            setOrg(JSON.parse(demoOrg))
+            setLoading(false)
+            return
+          }
+        }
+        
+        // Verify token and get user data
+        verifyToken(storedToken)
+      } else {
+        setLoading(false)
+      }
+    }, 100)
+
+    return () => clearTimeout(timer)
   }, [])
 
   const verifyToken = async (token: string) => {
     try {
       const response = await api.get('/auth/me', {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
+        timeout: 3000 // 3 second timeout
       })
       setUser(response.data.user)
       setOrg(response.data.org)
       setToken(token)
     } catch (error) {
-      // Token is invalid, remove it
+      // Token is invalid or backend is not available, remove it
+      console.warn('Token verification failed, removing stored token:', error)
       localStorage.removeItem('auth_token')
       setToken(null)
       setUser(null)
@@ -100,6 +121,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const logout = () => {
     localStorage.removeItem('auth_token')
+    localStorage.removeItem('demo_user')
+    localStorage.removeItem('demo_org')
     setToken(null)
     setUser(null)
     setOrg(null)

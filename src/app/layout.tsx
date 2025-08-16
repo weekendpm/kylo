@@ -7,8 +7,8 @@ import { AuthProvider } from '@/lib/auth-provider'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Revenue Recovery Copilot',
-  description: 'Detect and recover revenue leaks with AI-powered usage reconciliation',
+  title: 'Kylo.ai',
+  description: 'AI-powered revenue intelligence and leak detection platform',
 }
 
 export default function RootLayout({

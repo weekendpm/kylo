@@ -50,7 +50,7 @@ export function DashboardSidebar() {
             <path d="M12 12h.01"/>
           </svg>
         </div>
-        <div className="logo-text">Revenue Recovery</div>
+        <div className="logo-text">Kylo.ai</div>
       </div>
       
       <div className="nav-section">

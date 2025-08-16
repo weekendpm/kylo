@@ -1,6 +1,6 @@
-# Revenue Recovery Copilot
+# Kylo.ai
 
-A sophisticated SaaS platform for detecting and recovering revenue leaks through automated usage reconciliation. Built for SMB finance and RevOps teams.
+AI-powered revenue intelligence platform for detecting and recovering revenue leaks through automated usage reconciliation. Built for SMB finance and RevOps teams.
 
 ## Features
 
@@ -13,11 +13,12 @@ A sophisticated SaaS platform for detecting and recovering revenue leaks through
 
 ## Architecture
 
-- **Frontend**: Next.js 14 with TypeScript, Tailwind CSS, TanStack Table
-- **Backend**: Node.js with Fastify, TypeScript
+- **Frontend**: Next.js 14 with TypeScript, Tailwind CSS, TanStack Table (root directory)
+- **Backend**: Node.js with Fastify, TypeScript (backend/ directory)
 - **Database**: PostgreSQL with Knex.js migrations
 - **Queue**: Redis with BullMQ for background jobs
 - **Storage**: S3-compatible storage for exports and files
+- **Deployment**: Vercel-ready with separate backend deployment
 
 ## Quick Start
 
@@ -48,8 +49,11 @@ A sophisticated SaaS platform for detecting and recovering revenue leaks through
 
 3. **Manual Setup**
    ```bash
-   # Install dependencies
-   npm run install:all
+   # Install frontend dependencies
+   npm install
+   
+   # Install backend dependencies
+   npm run install:backend
    
    # Set up environment variables
    cp env.example .env
@@ -59,8 +63,11 @@ A sophisticated SaaS platform for detecting and recovering revenue leaks through
    createdb revenue_recovery
    npm run db:migrate
    
-   # Start development servers
+   # Start frontend (main app)
    npm run dev
+   
+   # In another terminal, start backend
+   npm run dev:backend
    ```
 
    This starts:
@@ -200,18 +207,43 @@ FROM actual, reported;
 
 ## Deployment
 
+### Vercel Deployment (Recommended for Frontend)
+
+1. **Deploy Frontend to Vercel**
+   ```bash
+   # Connect your GitHub repo to Vercel
+   # The vercel.json config is already set up
+   # Environment variables needed in Vercel:
+   # - NEXT_PUBLIC_API_URL (your backend URL)
+   ```
+
+2. **Deploy Backend Separately**
+   - **Railway**: Connect GitHub repo, deploy from `backend/` directory
+   - **Render**: Create web service from `backend/` directory  
+   - **Vercel Functions**: For smaller backends, use Vercel's serverless functions
+
 ### Production Setup
 
-1. **Database**: Use managed PostgreSQL (AWS RDS, Google Cloud SQL)
-2. **Redis**: Use managed Redis (AWS ElastiCache, Redis Cloud)
-3. **Frontend**: Deploy to Vercel or Netlify
-4. **Backend**: Deploy to Railway, Render, or AWS ECS
+1. **Database**: Use managed PostgreSQL (Neon, Supabase, AWS RDS)
+2. **Redis**: Use managed Redis (AWS ElastiCache, Redis Cloud, Upstash)
+3. **Frontend**: Vercel (automatic with GitHub integration)
+4. **Backend**: Railway, Render, or Vercel Functions
 5. **Storage**: Use AWS S3 or compatible object storage
 
-### Docker Deployment
-```bash
-# Build and run with Docker Compose
-docker-compose up -d
+### Environment Variables for Production
+
+**Frontend (Vercel)**:
+```
+NEXT_PUBLIC_API_URL=https://your-backend-url.com
+```
+
+**Backend**:
+```
+DATABASE_URL=postgresql://...
+REDIS_URL=redis://...
+JWT_SECRET=your-production-secret
+STRIPE_SECRET_KEY=sk_live_...
+# ... other production secrets
 ```
 
 ## Development
