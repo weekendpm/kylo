@@ -18,8 +18,8 @@ export default function LoginPage() {
     setError('')
 
     try {
-      // Demo mode: if email is 'demo@demo.com', skip actual authentication
-      if (email === 'demo@demo.com') {
+      // Demo mode: if email is 'demo@demo', skip actual authentication
+      if (email === 'demo@demo') {
         // Simulate API delay
         await new Promise(resolve => setTimeout(resolve, 1000))
         
@@ -27,7 +27,7 @@ export default function LoginPage() {
         const demoUser = {
           id: 'demo-user-id',
           org_id: 'demo-org-id',
-          email: 'demo@demo.com',
+          email: 'demo@demo',
           first_name: 'Demo',
           last_name: 'User',
           role: 'ADMIN' as const,
@@ -79,7 +79,7 @@ export default function LoginPage() {
             borderRadius: '8px'
           }}>
             <p className="text-xs" style={{ color: 'var(--primary-light)' }}>
-              💡 Demo Mode: Use email <strong>demo@demo.com</strong> with any password
+              💡 Demo Mode: Use email <strong>demo@demo</strong> with any password
             </p>
           </div>
         </div>
