@@ -1,123 +1,185 @@
-import axios from 'axios'
 import { demoSummaryData, isDemoMode } from './demo-data'
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'
+// Demo-only API helper for frontend
+const createMockApiCall = async <T>(data: T, delay = 300): Promise<{ data: T }> => {
+  await new Promise(resolve => setTimeout(resolve, delay))
+  return { data }
+}
 
-export const api = axios.create({
-  baseURL: API_URL,
-  headers: {
-    'Content-Type': 'application/json',
-  },
-})
-
-// Add auth token to requests
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('auth_token')
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`
-  }
-  return config
-})
-
-// Handle auth errors
-api.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    if (error.response?.status === 401) {
-      localStorage.removeItem('auth_token')
-      window.location.href = '/login'
-    }
-    return Promise.reject(error)
-  }
-)
-
-// API service functions
+// Demo-only API service functions
 export const authService = {
-  login: (email: string, password: string) =>
-    api.post('/api/auth/login', { email, password }),
+  login: async (email: string, password: string) => {
+    if (email === 'demo@demo') {
+      return createMockApiCall({
+        token: 'demo-token',
+        user: {
+          id: 'demo-user-1',
+          org_id: 'demo-org-1',
+          email: 'demo@demo',
+          first_name: 'Demo',
+          last_name: 'User',
+          role: 'ADMIN',
+          status: 'ACTIVE'
+        },
+        org: {
+          id: 'demo-org-1',
+          name: 'Demo Organization',
+          domain: 'demo.com',
+          settings: {}
+        }
+      }, 500)
+    }
+    throw new Error('Invalid credentials - use demo@demo')
+  },
   
-  register: (data: {
-    name: string
-    domain?: string
-    admin_email: string
-    admin_first_name: string
-    admin_last_name: string
-  }) => api.post('/api/auth/register', data),
+  register: async (data: any) => {
+    throw new Error('Registration not available in demo mode')
+  },
   
-  me: () => api.get('/api/auth/me'),
+  me: async () => {
+    const demoUser = localStorage.getItem('demo_user')
+    const demoOrg = localStorage.getItem('demo_org')
+    if (demoUser && demoOrg) {
+      return createMockApiCall({
+        user: JSON.parse(demoUser),
+        org: JSON.parse(demoOrg)
+      })
+    }
+    throw new Error('Not authenticated')
+  },
 }
 
 export const dashboardService = {
   getSummary: async (params?: { period_start?: string; period_end?: string }) => {
-    if (isDemoMode()) {
-      // Return demo data with a small delay to simulate API call
-      await new Promise(resolve => setTimeout(resolve, 500))
-      return { data: demoSummaryData }
-    }
-    return api.get('/api/dashboard/summary', { params })
+    return createMockApiCall(demoSummaryData, 500)
   },
   
   getAccountDetails: async (accountId: string) => {
-    if (isDemoMode()) {
-      await new Promise(resolve => setTimeout(resolve, 300))
-      return { 
-        data: {
-          account_id: accountId,
-          anomalies: demoSummaryData.top_anomalies.filter(a => a.account_id === accountId),
-          usage_trends: []
-        }
-      }
-    }
-    return api.get(`/api/dashboard/accounts/${accountId}`)
+    return createMockApiCall({
+      account_id: accountId,
+      anomalies: demoSummaryData.top_anomalies.filter(a => a.account_id === accountId),
+      usage_trends: []
+    })
   },
 }
 
 export const reconService = {
-  getResults: (params?: {
-    account_id?: string
-    product_id?: string
-    anomaly_type?: string
-    status?: string
-    severity?: string
-    period_start?: string
-    period_end?: string
-    min_leak_value?: number
-    min_confidence?: number
-    limit?: number
-    offset?: number
-  }) => api.get('/api/recon/results', { params }),
+  getResults: async (params?: any) => {
+    return createMockApiCall({
+      results: demoSummaryData.top_anomalies,
+      total: demoSummaryData.top_anomalies.length,
+      page: 1,
+      limit: 10
+    })
+  },
   
-  getRuns: () => api.get('/api/recon/runs'),
+  getRuns: async () => {
+    return createMockApiCall({
+      runs: [
+        {
+          id: 'run-1',
+          status: 'completed',
+          period_start: '2024-01-01',
+          period_end: '2024-01-31',
+          created_at: '2024-01-31T10:00:00Z',
+          completed_at: '2024-01-31T10:05:00Z'
+        }
+      ]
+    })
+  },
   
-  createRun: (data: { period_start: string; period_end: string }) =>
-    api.post('/api/recon/runs', data),
+  createRun: async (data: { period_start: string; period_end: string }) => {
+    return createMockApiCall({
+      id: 'run-new',
+      status: 'running',
+      ...data,
+      created_at: new Date().toISOString()
+    })
+  },
 }
 
 export const integrationService = {
-  getAll: () => api.get('/api/integrations'),
+  getAll: async () => {
+    return createMockApiCall({
+      integrations: [
+        { id: 'stripe', name: 'Stripe', status: 'connected', type: 'payment' },
+        { id: 'salesforce', name: 'Salesforce', status: 'disconnected', type: 'crm' },
+        { id: 'hubspot', name: 'HubSpot', status: 'disconnected', type: 'crm' }
+      ]
+    })
+  },
   
-  getStatus: () => api.get('/api/integrations/status'),
+  getStatus: async () => {
+    return createMockApiCall({
+      stripe: { connected: true, last_sync: '2024-01-31T10:00:00Z' },
+      salesforce: { connected: false },
+      hubspot: { connected: false }
+    })
+  },
   
-  connectStripe: (data: { api_key: string }) =>
-    api.post('/api/integrations/stripe/connect', data),
+  connectStripe: async (data: { api_key: string }) => {
+    return createMockApiCall({ success: true, message: 'Demo: Stripe would be connected' })
+  },
 }
 
 export const actionService = {
-  getAll: () => api.get('/api/actions'),
+  getAll: async () => {
+    return createMockApiCall({
+      actions: [
+        {
+          id: 'action-1',
+          type: 'stripe_invoice',
+          status: 'completed',
+          created_at: '2024-01-31T10:00:00Z'
+        }
+      ]
+    })
+  },
   
-  createStripeInvoice: (data: { recon_result_id: string }) =>
-    api.post('/api/actions/stripe/draft-invoice', data),
+  createStripeInvoice: async (data: { recon_result_id: string }) => {
+    return createMockApiCall({
+      id: 'invoice-demo',
+      status: 'draft',
+      message: 'Demo: Invoice would be created in Stripe'
+    })
+  },
   
-  createCrmTask: (data: { recon_result_id: string }) =>
-    api.post('/api/actions/crm/task', data),
+  createCrmTask: async (data: { recon_result_id: string }) => {
+    return createMockApiCall({
+      id: 'task-demo',
+      status: 'created',
+      message: 'Demo: Task would be created in CRM'
+    })
+  },
 }
 
 export const exportService = {
-  getAll: () => api.get('/api/exports'),
+  getAll: async () => {
+    return createMockApiCall({
+      exports: [
+        {
+          id: 'export-1',
+          type: 'csv',
+          status: 'completed',
+          created_at: '2024-01-31T10:00:00Z',
+          download_url: '/demo-export.csv'
+        }
+      ]
+    })
+  },
   
-  createCsv: (data: { filters: Record<string, any> }) =>
-    api.post('/api/exports/csv', data),
+  createCsv: async (data: { filters: Record<string, any> }) => {
+    return createMockApiCall({
+      id: 'export-new',
+      status: 'processing',
+      message: 'Demo: CSV export would be generated'
+    })
+  },
   
-  download: (exportId: string) =>
-    api.get(`/api/exports/${exportId}/download`, { responseType: 'blob' }),
+  download: async (exportId: string) => {
+    // Create a demo CSV blob
+    const csvContent = 'Account,Product,Amount,Type\nDemo Account,Demo Product,$1000,Revenue Leak'
+    const blob = new Blob([csvContent], { type: 'text/csv' })
+    return createMockApiCall(blob)
+  },
 }

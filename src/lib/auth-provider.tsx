@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react'
 import { useRouter } from 'next/navigation'
-import { api } from './api'
+import { authService } from './api'
 
 interface User {
   id: string
@@ -84,17 +84,16 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const verifyToken = async (token: string) => {
     try {
-      const response = await api.get('/auth/me', {
-        headers: { Authorization: `Bearer ${token}` },
-        timeout: 3000 // 3 second timeout
-      })
+      const response = await authService.me()
       setUser(response.data.user)
       setOrg(response.data.org)
       setToken(token)
     } catch (error) {
-      // Token is invalid or backend is not available, remove it
+      // Token is invalid, remove it
       console.warn('Token verification failed, removing stored token:', error)
       localStorage.removeItem('auth_token')
+      localStorage.removeItem('demo_user')
+      localStorage.removeItem('demo_org')
       setToken(null)
       setUser(null)
       setOrg(null)
@@ -105,17 +104,19 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const login = async (email: string, password: string) => {
     try {
-      const response = await api.post('/auth/login', { email, password })
+      const response = await authService.login(email, password)
       const { token: newToken, user: userData, org: orgData } = response.data
       
       localStorage.setItem('auth_token', newToken)
+      localStorage.setItem('demo_user', JSON.stringify(userData))
+      localStorage.setItem('demo_org', JSON.stringify(orgData))
       setToken(newToken)
       setUser(userData)
       setOrg(orgData)
       
       router.push('/dashboard')
     } catch (error: any) {
-      throw new Error(error.response?.data?.error || 'Login failed')
+      throw new Error(error.message || 'Login failed')
     }
   }
 
