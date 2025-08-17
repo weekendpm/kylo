@@ -1,317 +1,190 @@
-# Kylo.ai
+# Kylo.ai - Revenue Recovery Platform (Frontend Demo)
 
-AI-powered revenue intelligence platform for detecting and recovering revenue leaks through automated usage reconciliation. Built for SMB finance and RevOps teams.
+Clean, modern frontend for AI-powered revenue recovery and billing reconciliation platform.
 
-## Features
+## 🚀 Features
 
-- **Revenue Leak Detection**: Reconcile actual usage vs reported usage to identify under-billing
-- **Anomaly Analysis**: Detect missed overages, under-reported usage, and renewal drift
-- **Actionable Outputs**: Draft invoices in Stripe, create CRM tasks, export audit trails
-- **Real-time Dashboard**: Monitor leaks, confidence scores, and recovery actions
-- **Integrations**: Stripe, Salesforce, HubSpot, and custom usage data sources
-- **Audit & Compliance**: Comprehensive logging and role-based access control
+- **🎯 Demo Mode**: Fully functional frontend with realistic demo data
+- **🧠 Intelligent Detection**: AI-powered revenue leak detection interface
+- **⚡ Smart Automation**: Automated workflow management dashboard
+- **📊 Real-time Analytics**: Interactive revenue health monitoring
+- **🎨 Modern UI/UX**: Clean, responsive design with Tailwind CSS
+- **📱 Multi-platform Ready**: Optimized for desktop and mobile
 
-## Architecture
+## 🛠️ Tech Stack
 
-- **Frontend**: Next.js 14 with TypeScript, Tailwind CSS, TanStack Table (root directory)
-- **Backend**: Node.js with Fastify, TypeScript (backend/ directory)
-- **Database**: PostgreSQL with Knex.js migrations
-- **Queue**: Redis with BullMQ for background jobs
-- **Storage**: S3-compatible storage for exports and files
-- **Deployment**: Vercel-ready with separate backend deployment
+- **Next.js 14** - React framework with app router
+- **TypeScript** - Type-safe development
+- **Tailwind CSS** - Utility-first styling
+- **Headless UI** - Accessible components
+- **Recharts** - Data visualization
+- **React Query** - Data fetching and state management
 
-## Quick Start
+## ⚡ Quick Start
 
 ### Prerequisites
+- Node.js 18+
 
-- Node.js 18+ and npm
-- PostgreSQL 14+
-- Redis 6+
-- Git
-
-### Installation
-
-1. **Clone the repository**
-   ```bash
-   git clone <repository-url>
-   cd kylo
-   ```
-
-2. **Quick Start (Recommended)**
-   ```bash
-   ./start-dev.sh
-   ```
-   This script will:
-   - Install all dependencies
-   - Set up environment files
-   - Run database migrations
-   - Start both frontend and backend servers
-
-3. **Manual Setup**
-   ```bash
-   # Install frontend dependencies
-   npm install
-   
-   # Install backend dependencies
-   npm run install:backend
-   
-   # Set up environment variables
-   cp env.example .env
-   # Edit .env with your configuration
-   
-   # Set up the database
-   createdb revenue_recovery
-   npm run db:migrate
-   
-   # Start frontend (main app)
-   npm run dev
-   
-   # In another terminal, start backend
-   npm run dev:backend
-   ```
-
-   This starts:
-   - Frontend: http://localhost:3000
-   - Backend API: http://localhost:3001
-
-## Environment Configuration
-
-Key environment variables (see `env.example` for complete list):
-
+### 1. Clone & Install
 ```bash
-# Database
-DATABASE_URL=postgresql://username:password@localhost:5432/revenue_recovery
-
-# Redis
-REDIS_URL=redis://localhost:6379
-
-# JWT
-JWT_SECRET=your-super-secret-jwt-key
-
-# Stripe
-STRIPE_SECRET_KEY=sk_test_...
-STRIPE_WEBHOOK_SECRET=whsec_...
-
-# Email
-SMTP_HOST=smtp.postmarkapp.com
-SMTP_USER=your-smtp-user
-SMTP_PASSWORD=your-smtp-password
-
-# AWS (for S3 exports)
-AWS_ACCESS_KEY_ID=your-access-key
-AWS_SECRET_ACCESS_KEY=your-secret-key
-AWS_S3_BUCKET=revenue-recovery-exports
+git clone https://github.com/weekendpm/kylo.git
+cd kylo
+npm install
 ```
 
-## Database Schema
-
-The system uses a multi-tenant architecture with the following key entities:
-
-- **Organizations & Users**: Multi-tenant with role-based access (Admin, Analyst)
-- **Integrations**: Stripe, CRM, and usage data source connections
-- **Products & Mappings**: Map product usage events to billing meters
-- **Usage Data**: Actual vs reported usage reconciliation
-- **Reconciliation Results**: Detected anomalies with confidence scoring
-- **Actions**: Automated invoice drafts, CRM tasks, notifications
-- **Audit Logs**: Complete activity tracking for compliance
-
-## API Endpoints
-
-### Authentication
-- `POST /api/auth/register` - Register new organization
-- `POST /api/auth/login` - User login
-- `GET /api/auth/me` - Get current user profile
-
-### Dashboard
-- `GET /api/dashboard/summary` - Overview metrics and top anomalies
-- `GET /api/dashboard/accounts/:id` - Account-specific details
-
-### Reconciliation
-- `GET /api/recon/results` - List anomalies with filtering
-- `GET /api/recon/runs` - Reconciliation job history
-- `POST /api/recon/runs` - Trigger new reconciliation
-
-### Actions
-- `POST /api/actions/stripe/draft-invoice` - Create Stripe invoice draft
-- `POST /api/actions/crm/task` - Create CRM upsell task
-- `GET /api/actions` - List all actions
-
-### Integrations
-- `GET /api/integrations/status` - Integration health status
-- `POST /api/integrations/stripe/connect` - Connect Stripe account
-
-## Usage Data Integration
-
-The platform supports multiple usage data sources:
-
-### Option A: Direct SQL Connection
-```sql
--- Expected schema for usage data
-CREATE TABLE api_call_logs (
-  account_id VARCHAR(255),
-  product_key VARCHAR(255),
-  ts TIMESTAMP,
-  units INTEGER
-);
-```
-
-### Option B: S3 Parquet Files
-Daily parquet files with columns: `account_id`, `product_key`, `ts`, `units`
-
-### Option C: API Ingestion
-Send usage data via REST API:
+### 2. Start Development Server
 ```bash
-POST /api/usage/ingest
-{
-  "account_id": "customer-123",
-  "product_key": "api_calls",
-  "timestamp": "2024-01-15T10:00:00Z",
-  "units": 1000
-}
+# Using the automated script
+chmod +x start-dev.sh
+./start-dev.sh
+
+# Or manually
+npm run dev
 ```
 
-## Reconciliation Logic
+### 3. Access the Demo
+- **URL**: http://localhost:3000
+- **Demo Login**: `demo@demo` (any password)
+- **All Features**: Fully functional with realistic demo data
 
-The core reconciliation engine:
+## 📁 Project Structure
 
-1. **Data Collection**: Pulls usage from product logs and Stripe
-2. **Time Bucketing**: Aggregates by day/hour within billing periods
-3. **Variance Detection**: Compares actual vs reported usage
-4. **Leak Calculation**: Computes under-reported units and missed overages
-5. **Confidence Scoring**: Assesses data quality and mapping accuracy
-6. **Anomaly Classification**: Categorizes by type and severity
-
-### Example Reconciliation
-```sql
--- Find under-reported usage for an account/product/period
-WITH actual AS (
-  SELECT SUM(units) as total_actual
-  FROM usage_actual 
-  WHERE account_id = 'customer-123' 
-    AND product_id = 'api-calls'
-    AND ts_bucket BETWEEN '2024-01-01' AND '2024-01-31'
-),
-reported AS (
-  SELECT SUM(units) as total_reported
-  FROM usage_reported
-  WHERE account_id = 'customer-123'
-    AND product_id = 'api-calls' 
-    AND ts_bucket BETWEEN '2024-01-01' AND '2024-01-31'
-)
-SELECT 
-  actual.total_actual,
-  reported.total_reported,
-  GREATEST(actual.total_actual - reported.total_reported, 0) as leak_units
-FROM actual, reported;
-```
-
-## Deployment
-
-### Vercel Deployment (Recommended for Frontend)
-
-1. **Deploy Frontend to Vercel**
-   ```bash
-   # Connect your GitHub repo to Vercel
-   # The vercel.json config is already set up
-   # Environment variables needed in Vercel:
-   # - NEXT_PUBLIC_API_URL (your backend URL)
-   ```
-
-2. **Deploy Backend Separately**
-   - **Railway**: Connect GitHub repo, deploy from `backend/` directory
-   - **Render**: Create web service from `backend/` directory  
-   - **Vercel Functions**: For smaller backends, use Vercel's serverless functions
-
-### Production Setup
-
-1. **Database**: Use managed PostgreSQL (Neon, Supabase, AWS RDS)
-2. **Redis**: Use managed Redis (AWS ElastiCache, Redis Cloud, Upstash)
-3. **Frontend**: Vercel (automatic with GitHub integration)
-4. **Backend**: Railway, Render, or Vercel Functions
-5. **Storage**: Use AWS S3 or compatible object storage
-
-### Environment Variables for Production
-
-**Frontend (Vercel)**:
-```
-NEXT_PUBLIC_API_URL=https://your-backend-url.com
-```
-
-**Backend**:
-```
-DATABASE_URL=postgresql://...
-REDIS_URL=redis://...
-JWT_SECRET=your-production-secret
-STRIPE_SECRET_KEY=sk_live_...
-# ... other production secrets
-```
-
-## Development
-
-### Project Structure
 ```
 kylo/
-├── frontend/                 # Next.js frontend
-│   ├── src/
-│   │   ├── app/             # App router pages
-│   │   ├── components/      # Reusable components
-│   │   └── lib/             # Utilities and providers
-├── backend/                 # Node.js backend
-│   ├── src/
-│   │   ├── routes/          # API endpoints
-│   │   ├── services/        # Business logic
-│   │   ├── database/        # Migrations and models
-│   │   └── utils/           # Utilities
-└── docs/                    # Documentation
+├── src/
+│   ├── app/                 # Next.js app router pages
+│   │   ├── dashboard/       # Main dashboard pages
+│   │   │   ├── detection/   # AI detection interface
+│   │   │   ├── automation/  # Workflow automation
+│   │   │   ├── accounts/    # Account management
+│   │   │   └── ...         # Other modules
+│   │   ├── login/          # Authentication
+│   │   └── globals.css     # Global styles
+│   ├── components/         # Reusable React components
+│   │   └── dashboard/      # Dashboard-specific components
+│   └── lib/               # Utilities and configurations
+│       ├── api.ts         # Demo API service layer
+│       ├── auth-provider.tsx # Authentication context
+│       └── demo-data.ts   # Realistic demo data
+├── public/                # Static assets
+└── package.json          # Dependencies and scripts
 ```
 
-### Running Tests
+## 🎮 Demo Features
+
+### 🔐 Authentication
+- **Demo Login**: Use `demo@demo` with any password
+- **Persistent Session**: Login state maintained across page reloads
+- **Secure Context**: Full auth flow simulation
+
+### 📊 Dashboard Modules
+
+#### 🏠 **Overview**
+- Revenue metrics and KPIs
+- Top anomalies detection
+- Interactive charts and graphs
+- Quick action buttons
+
+#### 🔍 **Detection Engine**
+- AI-powered leak detection
+- Confidence scoring
+- Anomaly categorization
+- Detection rule management
+
+#### ⚙️ **Automation Engine**
+- Workflow rule builder
+- Performance analytics
+- Template marketplace
+- Smart action triggers
+
+#### 📈 **Additional Modules**
+- **Reconciliation**: Revenue matching and analysis
+- **Accounts**: Customer account management
+- **Integrations**: Third-party service connections
+- **Reports**: Analytics and export tools
+- **Settings**: Configuration and preferences
+
+## 🚀 Available Scripts
+
 ```bash
-# Backend tests
-cd backend && npm test
-
-# Frontend tests
-cd frontend && npm test
+npm run dev          # Start development server
+npm run build        # Build for production
+npm run start        # Start production server
+npm run lint         # Run ESLint
+npm run type-check   # TypeScript type checking
 ```
 
-### Database Migrations
+## 🌐 Deployment
+
+### Vercel (Recommended)
+The project is optimized for Vercel deployment:
+
 ```bash
-# Create new migration
-cd backend && npm run db:generate migration_name
+# Install Vercel CLI
+npm i -g vercel
 
-# Run migrations
-npm run db:migrate
+# Deploy
+vercel
 
-# Rollback last migration
-npm run db:rollback
+# Set environment variable for demo mode
+vercel env add NEXT_PUBLIC_DEMO_MODE true
 ```
 
-## Security & Compliance
+### Other Platforms
+Standard Next.js deployment works on:
+- Netlify
+- AWS Amplify
+- Railway
+- Any Node.js hosting
 
-- **Multi-tenant isolation**: Row-level security by organization
-- **Encrypted secrets**: All API keys and tokens encrypted at rest
-- **Audit logging**: Complete activity trails for compliance
-- **RBAC**: Admin and Analyst roles with scoped permissions
-- **API rate limiting**: Prevent abuse and ensure fair usage
-- **Signed URLs**: Secure file downloads with expiration
+## 🔧 Configuration
 
-## Monitoring & Observability
+### Environment Variables
+Create `.env.local` for custom configuration:
 
-- **Application metrics**: Response times, error rates, throughput
-- **Business metrics**: Revenue leak detected, actions taken, confidence scores
-- **Error tracking**: Centralized error logging with correlation IDs
-- **Performance monitoring**: Database query performance and API latency
+```env
+# Demo Mode (enabled by default)
+NEXT_PUBLIC_DEMO_MODE=true
 
-## Support & Documentation
+# App Configuration
+NEXT_PUBLIC_APP_NAME=Kylo.ai
+NEXT_PUBLIC_APP_URL=http://localhost:3000
 
-- **API Documentation**: Available at `/api/docs` when running
-- **Health Check**: Monitor status at `/health`
-- **Logs**: Structured JSON logging with correlation tracking
+# Demo User Settings
+NEXT_PUBLIC_DEMO_EMAIL=demo@demo
+NEXT_PUBLIC_DEMO_NAME=Demo User
+```
 
-## License
+## 🎨 Customization
 
-Copyright (c) 2024 Revenue Recovery Copilot. All rights reserved.
+### Theme & Styling
+- **Tailwind Config**: `tailwind.config.js`
+- **Global Styles**: `src/app/globals.css`
+- **Component Styles**: Utility classes throughout components
+
+### Demo Data
+- **Customize Demo Data**: Edit `src/lib/demo-data.ts`
+- **API Responses**: Modify `src/lib/api.ts` service functions
+- **User Experience**: Update demo flows in components
+
+## 🚧 Development
+
+### Code Quality
+- **TypeScript**: Strict type checking enabled
+- **ESLint**: Configured for Next.js best practices
+- **Prettier**: Code formatting (configure in your editor)
+
+### Component Architecture
+- **Server Components**: Used where possible for performance
+- **Client Components**: For interactive features
+- **Separation**: Logic separated from presentation
+- **Reusability**: Modular, reusable component design
+
+## 📝 License
+
+This project is proprietary software. All rights reserved.
 
 ---
 
-For questions or support, please contact the development team or check the documentation at `/docs`.
+**Live Demo**: [https://kylo-eight.vercel.app](https://kylo-eight.vercel.app)  
+**Login**: `demo@demo` (any password)
