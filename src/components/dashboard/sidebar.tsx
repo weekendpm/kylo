@@ -4,31 +4,45 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { 
   HomeIcon, 
-  MagnifyingGlassIcon,
-  UserGroupIcon,
-  ClockIcon,
+  ChartBarIcon,
   DocumentTextIcon,
+  MagnifyingGlassIcon,
+  CreditCardIcon,
+  EyeIcon,
+  ClockIcon,
+  ExclamationTriangleIcon,
+  BoltIcon,
+  UserGroupIcon,
   LinkIcon,
-  CogIcon
+  ArchiveBoxIcon,
+  CogIcon,
+  ShieldCheckIcon
 } from '@heroicons/react/24/outline'
 import { useAuth } from '@/lib/auth-provider'
 import clsx from 'clsx'
 
 const analyticsNavigation = [
   { name: 'Overview', href: '/dashboard', icon: HomeIcon },
-  { name: 'Detection Engine', href: '/dashboard/detection', icon: MagnifyingGlassIcon },
-  { name: 'Reconciliation', href: '/dashboard/reconciliation', icon: MagnifyingGlassIcon },
-  { name: 'Accounts', href: '/dashboard/accounts', icon: UserGroupIcon },
+  { name: 'Reports', href: '/dashboard/reports', icon: DocumentTextIcon },
 ]
 
-const actionsNavigation = [
-  { name: 'Automation Rules', href: '/dashboard/automation', icon: ClockIcon },
-  { name: 'Reports', href: '/dashboard/reports', icon: DocumentTextIcon },
+const detectionNavigation = [
+  { name: 'Detection Engine', href: '/dashboard/detection', icon: MagnifyingGlassIcon },
+  { name: 'Entitlements', href: '/dashboard/entitlements', icon: CreditCardIcon },
+  { name: 'Credit Monitor', href: '/dashboard/credits', icon: EyeIcon },
+  { name: 'Scheduling', href: '/dashboard/scheduling', icon: ClockIcon },
+]
+
+const operationsNavigation = [
+  { name: 'Anomalies', href: '/dashboard/anomalies', icon: ExclamationTriangleIcon },
+  { name: 'Recovery Actions', href: '/dashboard/recovery', icon: BoltIcon },
+  { name: 'Accounts', href: '/dashboard/accounts', icon: UserGroupIcon },
 ]
 
 const systemNavigation = [
   { name: 'Integrations', href: '/dashboard/integrations', icon: LinkIcon },
-  { name: 'Settings', href: '/dashboard/settings', icon: CogIcon },
+  { name: 'Audit & Evidence', href: '/dashboard/audit', icon: ArchiveBoxIcon },
+  { name: 'Settings & Access', href: '/dashboard/settings', icon: CogIcon },
 ]
 
 export function DashboardSidebar() {
@@ -73,9 +87,27 @@ export function DashboardSidebar() {
       </div>
       
       <div className="nav-section">
-        <div className="nav-label">Actions</div>
+        <div className="nav-label">Detection</div>
         <nav className="nav-menu">
-          {actionsNavigation.map((item) => (
+          {detectionNavigation.map((item) => (
+            <Link
+              key={item.name}
+              href={item.href}
+              className={clsx('nav-item', {
+                'active': isActive(item.href)
+              })}
+            >
+              <item.icon className="nav-icon" />
+              {item.name}
+            </Link>
+          ))}
+        </nav>
+      </div>
+      
+      <div className="nav-section">
+        <div className="nav-label">Operations</div>
+        <nav className="nav-menu">
+          {operationsNavigation.map((item) => (
             <Link
               key={item.name}
               href={item.href}
