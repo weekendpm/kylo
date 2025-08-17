@@ -390,6 +390,42 @@ body {
   box-shadow: var(--shadow-glow);
 }
 
+.form-input {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-secondary);
+  border-radius: 8px;
+  padding: 8px 12px;
+  color: var(--text-primary);
+  font-size: 14px;
+  transition: all 0.2s ease;
+  width: 100%;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--border-accent);
+  box-shadow: var(--shadow-glow);
+}
+
+.form-input::placeholder {
+  color: var(--text-muted);
+}
+
+.form-checkbox {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-secondary);
+  border-radius: 4px;
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  accent-color: var(--primary);
+}
+
+.form-checkbox:checked {
+  background: var(--primary);
+  border-color: var(--primary);
+}
+
 /* Button Sizes */
 .btn-sm {
   padding: 6px 12px;

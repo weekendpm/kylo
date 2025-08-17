@@ -51,9 +51,9 @@ export function KPICard({
     
     // For currency, positive is good (green), negative is bad (red)
     // For percentages, depends on context but assume positive is good
-    if (isPositive) return 'text-green-600'
-    if (isNegative) return 'text-red-600'
-    return 'text-gray-500'
+    if (isPositive) return 'text-success'
+    if (isNegative) return 'text-danger'
+    return 'text-text-secondary'
   }
 
   const getTrendIcon = () => {
@@ -67,27 +67,27 @@ export function KPICard({
   }
 
   return (
-    <div className={clsx('card p-6', className)}>
-      <div className="flex items-start justify-between">
+    <div className={clsx('summary-card', className)}>
+      <div className="flex items-start justify-between mb-3">
         <div className="flex-1">
-          <div className="flex items-center gap-2 mb-2">
-            <h3 className="text-sm font-medium text-gray-600">{title}</h3>
+          <div className="flex items-center gap-2 mb-3">
+            <h3 className="summary-label">{title}</h3>
             {tooltip && (
               <div className="group relative">
-                <InformationCircleIcon className="w-4 h-4 text-gray-400 cursor-help" />
-                <div className="absolute left-0 top-6 invisible group-hover:visible bg-gray-900 text-white text-xs rounded py-1 px-2 whitespace-nowrap z-10">
+                <InformationCircleIcon className="w-4 h-4 text-text-muted cursor-help" />
+                <div className="absolute left-0 top-6 invisible group-hover:visible bg-bg-elevated text-text-primary text-xs rounded py-1 px-2 whitespace-nowrap z-10 border border-border-secondary shadow-md">
                   {tooltip}
                 </div>
               </div>
             )}
           </div>
           
-          <div className="text-2xl font-bold text-gray-900 mb-2">
+          <div className="summary-value mb-2">
             {formatValue(value)}
           </div>
           
           {change && (
-            <div className={clsx('flex items-center gap-1 text-sm', getTrendColor())}>
+            <div className={clsx('summary-change flex items-center gap-1', getTrendColor())}>
               {getTrendIcon()}
               <span>
                 {Math.abs(change.value)}% {change.period || 'vs last month'}

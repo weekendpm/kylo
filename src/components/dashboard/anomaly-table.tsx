@@ -42,10 +42,10 @@ interface AnomalyTableProps {
 }
 
 const severityColors = {
-  Critical: 'bg-red-100 text-red-800',
-  High: 'bg-orange-100 text-orange-800',
-  Medium: 'bg-yellow-100 text-yellow-800',
-  Low: 'bg-green-100 text-green-800'
+  Critical: 'status-critical',
+  High: 'status-high', 
+  Medium: 'status-medium',
+  Low: 'status-low'
 }
 
 export function AnomalyTable({ 
@@ -100,12 +100,12 @@ export function AnomalyTable({
   return (
     <div className="card">
       {showFilters && (
-        <div className="border-b p-4">
+        <div className="border-b border-border-primary p-4">
           <div className="flex items-center gap-4 mb-4">
-            <FunnelIcon className="w-5 h-5 text-gray-400" />
-            <span className="text-sm font-medium text-gray-700">Filters</span>
+            <FunnelIcon className="w-5 h-5 text-text-muted" />
+            <span className="text-sm font-medium text-text-primary">Filters</span>
             <div className="ml-auto flex items-center gap-2">
-              <BookmarkIcon className="w-4 h-4 text-gray-400" />
+              <BookmarkIcon className="w-4 h-4 text-text-muted" />
               <select className="form-select text-sm">
                 <option>Saved Views</option>
                 <option>CFO Weeklies</option>
@@ -160,33 +160,33 @@ export function AnomalyTable({
       )}
 
       <div className="overflow-x-auto">
-        <table className="w-full">
-          <thead className="bg-gray-50">
+        <table className="data-table">
+          <thead>
             <tr>
               {allowSelection && (
                 <th className="px-4 py-3 text-left">
                   <input type="checkbox" className="form-checkbox" />
                 </th>
               )}
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Account</th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Product</th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Period</th>
-              <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actual</th>
-              <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Reported</th>
-              <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Δ</th>
-              <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Net $ Due</th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Severity</th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Root Cause</th>
-              <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+              <th className="text-left">Account</th>
+              <th className="text-left">Product</th>
+              <th className="text-left">Period</th>
+              <th className="text-right">Actual</th>
+              <th className="text-right">Reported</th>
+              <th className="text-right">Δ</th>
+              <th className="text-right">Net $ Due</th>
+              <th className="text-left">Severity</th>
+              <th className="text-left">Root Cause</th>
+              <th className="text-right">Actions</th>
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
+          <tbody>
             {filteredAnomalies.map((anomaly) => (
               <tr 
                 key={anomaly.id} 
                 className={clsx(
-                  'hover:bg-gray-50 cursor-pointer',
-                  selectedRows.has(anomaly.id) && 'bg-blue-50'
+                  'cursor-pointer',
+                  selectedRows.has(anomaly.id) && 'bg-primary/5'
                 )}
                 onClick={() => onRowClick?.(anomaly)}
               >
@@ -201,46 +201,43 @@ export function AnomalyTable({
                     />
                   </td>
                 )}
-                <td className="px-4 py-4 whitespace-nowrap">
-                  <div className="text-sm font-medium text-gray-900">{anomaly.account}</div>
+                <td>
+                  <div className="font-medium">{anomaly.account}</div>
                 </td>
-                <td className="px-4 py-4 whitespace-nowrap">
-                  <div className="text-sm text-gray-900">{anomaly.product}</div>
+                <td>
+                  <div>{anomaly.product}</div>
                 </td>
-                <td className="px-4 py-4 whitespace-nowrap">
-                  <div className="text-sm text-gray-900">{anomaly.period}</div>
+                <td>
+                  <div>{anomaly.period}</div>
                 </td>
-                <td className="px-4 py-4 whitespace-nowrap text-right">
-                  <div className="text-sm text-gray-900">{formatNumber(anomaly.actual)}</div>
+                <td className="text-right">
+                  <div className="value-cell">{formatNumber(anomaly.actual)}</div>
                 </td>
-                <td className="px-4 py-4 whitespace-nowrap text-right">
-                  <div className="text-sm text-gray-900">{formatNumber(anomaly.reported)}</div>
+                <td className="text-right">
+                  <div className="value-cell">{formatNumber(anomaly.reported)}</div>
                 </td>
-                <td className="px-4 py-4 whitespace-nowrap text-right">
-                  <div className="text-sm font-medium text-red-600">+{formatNumber(anomaly.delta)}</div>
+                <td className="text-right">
+                  <div className="value-cell text-danger">+{formatNumber(anomaly.delta)}</div>
                 </td>
-                <td className="px-4 py-4 whitespace-nowrap text-right">
-                  <div className="text-sm font-medium text-gray-900">{formatCurrency(anomaly.netDue)}</div>
+                <td className="text-right">
+                  <div className="value-cell font-bold">{formatCurrency(anomaly.netDue)}</div>
                 </td>
-                <td className="px-4 py-4 whitespace-nowrap">
-                  <span className={clsx(
-                    'inline-flex px-2 py-1 text-xs font-semibold rounded-full',
-                    severityColors[anomaly.severity]
-                  )}>
+                <td>
+                  <span className={clsx('status-badge', severityColors[anomaly.severity])}>
                     {anomaly.severity}
                   </span>
                 </td>
-                <td className="px-4 py-4 whitespace-nowrap">
-                  <div className="text-sm text-gray-900">{anomaly.rootCause}</div>
+                <td>
+                  <div>{anomaly.rootCause}</div>
                 </td>
-                <td className="px-4 py-4 whitespace-nowrap text-right">
+                <td className="text-right">
                   <div className="flex items-center justify-end gap-2">
                     <button
                       onClick={(e) => {
                         e.stopPropagation()
                         onViewEvidence?.(anomaly)
                       }}
-                      className="text-gray-400 hover:text-gray-600"
+                      className="text-text-muted hover:text-text-primary transition-colors"
                       title="View Evidence"
                     >
                       <EyeIcon className="w-4 h-4" />
@@ -250,7 +247,7 @@ export function AnomalyTable({
                         e.stopPropagation()
                         onDraftInvoice?.(anomaly)
                       }}
-                      className="text-blue-400 hover:text-blue-600"
+                      className="text-primary hover:text-primary-light transition-colors"
                       title="Draft Invoice"
                     >
                       <DocumentTextIcon className="w-4 h-4" />
@@ -260,7 +257,7 @@ export function AnomalyTable({
                         e.stopPropagation()
                         onCreateTask?.(anomaly)
                       }}
-                      className="text-green-400 hover:text-green-600"
+                      className="text-success hover:text-success/80 transition-colors"
                       title="Create SF Task"
                     >
                       <BriefcaseIcon className="w-4 h-4" />
@@ -270,7 +267,7 @@ export function AnomalyTable({
                         e.stopPropagation()
                         onSuppress?.(anomaly)
                       }}
-                      className="text-red-400 hover:text-red-600"
+                      className="text-danger hover:text-danger/80 transition-colors"
                       title="Suppress"
                     >
                       <XMarkIcon className="w-4 h-4" />
@@ -285,7 +282,7 @@ export function AnomalyTable({
 
       {filteredAnomalies.length === 0 && (
         <div className="text-center py-12">
-          <div className="text-gray-500">No anomalies found matching the current filters.</div>
+          <div className="text-text-secondary">No anomalies found matching the current filters.</div>
         </div>
       )}
     </div>

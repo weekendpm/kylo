@@ -9,36 +9,51 @@ module.exports = {
   theme: {
     extend: {
       colors: {
+        // KDS Color System
         primary: {
-          50: '#eff6ff',
-          100: '#dbeafe',
-          500: '#3b82f6',
-          600: '#2563eb',
-          700: '#1d4ed8',
-          900: '#1e3a8a',
+          DEFAULT: '#3b82f6',
+          light: '#60a5fa',
+          dark: '#1d4ed8',
         },
-        success: {
-          50: '#f0fdf4',
-          100: '#dcfce7',
-          500: '#22c55e',
-          600: '#16a34a',
+        accent: '#8b5cf6',
+        success: '#10b981',
+        warning: '#f59e0b', 
+        danger: '#ef4444',
+        
+        // KDS Backgrounds
+        bg: {
+          primary: '#0a0a0a',
+          secondary: '#111111',
+          tertiary: '#1a1a1a',
+          card: '#161616',
+          elevated: '#1f1f1f',
         },
-        warning: {
-          50: '#fffbeb',
-          100: '#fef3c7',
-          500: '#f59e0b',
-          600: '#d97706',
+        
+        // KDS Text Colors  
+        text: {
+          primary: '#ffffff',
+          secondary: '#a3a3a3',
+          tertiary: '#737373',
+          muted: '#525252',
         },
-        danger: {
-          50: '#fef2f2',
-          100: '#fee2e2',
-          500: '#ef4444',
-          600: '#dc2626',
-        }
+        
+        // KDS Borders
+        border: {
+          primary: '#262626',
+          secondary: '#404040',
+          accent: 'rgba(59, 130, 246, 0.3)',
+        },
       },
       fontFamily: {
         sans: ['Inter', 'ui-sans-serif', 'system-ui'],
+        mono: ['JetBrains Mono', 'ui-monospace', 'monospace'],
       },
+      boxShadow: {
+        'glow': '0 0 0 1px rgba(59, 130, 246, 0.1), 0 4px 16px rgba(59, 130, 246, 0.12)',
+      },
+      animation: {
+        'pulse-slow': 'pulse 2s infinite',
+      }
     },
   },
   plugins: [],
